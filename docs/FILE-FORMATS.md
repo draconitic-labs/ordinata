@@ -142,8 +142,9 @@ Every numeric cell must be a **finite decimal**. `NaN`, `inf`, `-inf`, and anyth
 overflows to an infinity (`1e999`) are refused by name and position.
 
 Note that a cell can be finite and the problem still not be representable: `1e300` divided by
-a standard error of `1e-300` is an infinity. That is caught too, as a `non_finite_scaled`
-refusal, before the decomposition.
+a standard error of `1e-300` is an infinity, as is a finite weighted design value divided by
+an extremely small positive penalty. Both are caught as `non_finite_scaled` refusals before
+the decomposition sees them.
 
 ---
 

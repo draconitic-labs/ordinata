@@ -538,9 +538,23 @@ fn check_scaling(
     design: &DMatrix<f64>,
     values: &DVector<f64>,
     errors: &DVector<f64>,
+    penalty: &DVector<f64>,
     ids: &[String],
     parameters: &[String],
 ) -> Result<()> {
+    let mut inverse_penalties = Vec::with_capacity(penalty.len());
+    for (j, value) in penalty.iter().enumerate() {
+        let inverse = 1.0 / value;
+        if !inverse.is_finite() {
+            let name = parameters.get(j).map_or("?", String::as_str);
+            return Err(NumericalError::NonFiniteScaled {
+                detail: format!("parameter {name}: 1 / penalty overflows to {inverse:?}"),
+            }
+            .into());
+        }
+        inverse_penalties.push(inverse);
+    }
+
     for (i, error) in errors.iter().enumerate() {
         let id = ids.get(i).map_or("?", String::as_str);
         let scaled_value = values[i] / error;
@@ -558,6 +572,15 @@ fn check_scaling(
                 return Err(NumericalError::NonFiniteScaled {
                     detail: format!(
                         "observation {id}, parameter {name}: design / standard_error overflows to {scaled:?}"
+                    ),
+                }
+                .into());
+            }
+            let penalty_scaled = scaled * inverse_penalties[j];
+            if !penalty_scaled.is_finite() {
+                return Err(NumericalError::NonFiniteScaled {
+                    detail: format!(
+                        "observation {id}, parameter {name}: design / standard_error / penalty overflows to {penalty_scaled:?}"
                     ),
                 }
                 .into());
@@ -704,7 +727,14 @@ fn assemble(
         1.0,
     )?;
 
-    check_scaling(&matrix, &values, &errors, &observation_ids, &parameters)?;
+    check_scaling(
+        &matrix,
+        &values,
+        &errors,
+        &penalty,
+        &observation_ids,
+        &parameters,
+    )?;
 
     let lambda_plan = match project.regularization.mode {
         RegularizationMode::Explicit => LambdaPlan::Explicit(
@@ -1181,6 +1211,26 @@ mod tests {
         .unwrap_err();
         assert_eq!(err.code(), "non_finite_scaled");
         assert_eq!(err.exit_code(), 3);
+    }
+
+    #[test]
+    fn an_overflowing_penalty_scale_is_refused_before_decomposition() {
+        // Every cell, the weighted design, and 1 / penalty are finite on their own,
+        // but combining the weighted design with the inverse penalty overflows.
+        let project = PROJECT.replace(
+            r#""regularization": { "mode": "explicit", "lambda": 0.0 }"#,
+            r#""regularization": { "mode": "explicit", "lambda": 1.0, "penalty": { "x": 1e-20 } }"#,
+        );
+        let err = load_from_bytes(
+            project.as_bytes(),
+            b"observation_id,x\nr1,1e300\nr2,2\n",
+            b"observation_id,value,standard_error\nr1,1,1\nr2,2,1\n",
+            false,
+        )
+        .unwrap_err();
+        assert_eq!(err.code(), "non_finite_scaled");
+        assert_eq!(err.exit_code(), 3);
+        assert!(err.to_string().contains("penalty"), "{err}");
     }
 
     #[test]

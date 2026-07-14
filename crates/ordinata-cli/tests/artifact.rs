@@ -209,6 +209,25 @@ fn scan(bytes: &[u8]) -> Vec<String> {
     findings
 }
 
+/// Read the PE/COFF timestamp when `bytes` is a Windows executable.
+///
+/// LLVM's MinGW linker writes the current wall-clock time here unless the release
+/// build explicitly disables it. That four-byte field is enough to make two otherwise
+/// identical clean builds hash differently.
+fn pe_coff_timestamp(bytes: &[u8]) -> Option<u32> {
+    if bytes.len() < 0x40 || &bytes[..2] != b"MZ" {
+        return None;
+    }
+    let header = u32::from_le_bytes(bytes[0x3c..0x40].try_into().ok()?) as usize;
+    let timestamp_end = header.checked_add(12)?;
+    if timestamp_end > bytes.len() || &bytes[header..header + 4] != b"PE\0\0" {
+        return None;
+    }
+    Some(u32::from_le_bytes(
+        bytes[header + 8..timestamp_end].try_into().ok()?,
+    ))
+}
+
 // ---------------------------------------------------------------------------
 // The scanner works.
 // ---------------------------------------------------------------------------
@@ -267,6 +286,17 @@ fn a_drive_letter_that_is_only_machine_code_is_not_a_path() {
         !scan(real).is_empty(),
         "a real absolute path was missed among the noise"
     );
+}
+
+#[test]
+fn the_pe_timestamp_parser_reads_the_coff_header() {
+    let mut executable = vec![0_u8; 0x8c];
+    executable[..2].copy_from_slice(b"MZ");
+    executable[0x3c..0x40].copy_from_slice(&0x80_u32.to_le_bytes());
+    executable[0x80..0x84].copy_from_slice(b"PE\0\0");
+    executable[0x88..0x8c].copy_from_slice(&0x1234_5678_u32.to_le_bytes());
+    assert_eq!(pe_coff_timestamp(&executable), Some(0x1234_5678));
+    assert_eq!(pe_coff_timestamp(b"not a PE file"), None);
 }
 
 // ---------------------------------------------------------------------------
@@ -354,4 +384,36 @@ fn the_shipped_artifact_carries_no_local_or_personal_path() {
     );
 
     eprintln!("scanned {} artifact(s), all clean", targets.len());
+}
+
+#[test]
+fn the_windows_release_has_no_wall_clock_timestamp() {
+    if !cfg!(windows) {
+        return;
+    }
+
+    let artifacts: Vec<_> = targets()
+        .into_iter()
+        .filter_map(|path| {
+            let bytes = std::fs::read(&path).ok()?;
+            pe_coff_timestamp(&bytes).map(|timestamp| (path, timestamp))
+        })
+        .collect();
+
+    if artifacts.is_empty() {
+        assert!(
+            std::env::var("ORDINATA_SCAN_REQUIRED").is_err(),
+            "the reproducibility scan was required but no Windows release executable was found"
+        );
+        return;
+    }
+
+    for (path, timestamp) in artifacts {
+        assert_eq!(
+            timestamp,
+            0,
+            "{} carries a wall-clock PE/COFF timestamp; build through packaging/build-release.ps1",
+            path.display()
+        );
+    }
 }

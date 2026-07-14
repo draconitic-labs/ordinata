@@ -68,7 +68,13 @@ $cargoHome = if ($env:CARGO_HOME) {
 # the workspace passes absolute paths for the local crates too.
 $remap = @(
     "--remap-path-prefix=$cargoHome=/cargo",
-    "--remap-path-prefix=$root=/ordinata"
+    "--remap-path-prefix=$root=/ordinata",
+
+    # LLVM's MinGW linker otherwise writes the current wall-clock time into the PE
+    # COFF header. Two clean builds of the same commit then differ by four bytes even
+    # though their code and data are identical. Suppress that timestamp so the release
+    # executable is reproducible rather than merely path-clean.
+    "-C link-arg=-Wl,--no-insert-timestamp"
 ) -join ' '
 
 Write-Host "Ordinata release build" -ForegroundColor Cyan

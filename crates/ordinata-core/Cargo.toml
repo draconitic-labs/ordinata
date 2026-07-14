@@ -1,0 +1,32 @@
+[package]
+name = "ordinata-core"
+description = "Numerical core, evidence bundle model, and offline verification for Ordinata."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+publish.workspace = true
+
+[package.metadata.ordinata]
+publisher = "Flintglade"
+support = "support@flintglade.com"
+
+[dependencies]
+csv.workspace = true
+miniz_oxide.workspace = true
+nalgebra.workspace = true
+rand_chacha.workspace = true
+rand_core.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+thiserror.workspace = true
+time.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "title": "Exact two-parameter recovery",
+  "description": "Five points that lie exactly on the line 3 + 2x, with unit standard errors. A correct unregularized solver must return the line back exactly.",
+  "designCsv": "design.csv",
+  "observationsCsv": "observations.csv",
+  "regularization": {
+    "mode": "explicit",
+    "lambda": 0.0
+  },
+  "uncertainty": {
+    "method": "analytic",
+    "confidenceLevel": 0.95
+  },
+  "assumptions": [
+    "The response is exactly linear in x, with an intercept.",
+    "Every observation has a standard deviation of exactly 1."
+  ],
+  "limitations": [
+    "This is synthetic data constructed to lie exactly on a line. Real observations never do.",
+    "Because the fit is exact, the residuals are zero and the reduced chi-square is zero, which contradicts the declared unit standard errors. Ordinata says so rather than quietly reporting a perfect fit."
+  ],
+  "validation": {
+    "weightedRmseMax": {
+      "value": 0.001,
+      "source": "The data is exactly linear, so the weighted RMSE must be zero up to rounding."
+    }
+  }
+}

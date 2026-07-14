@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "title": "Weighted fit with unequal standard errors",
+  "description": "Four points whose last two observations are twice as uncertain as the first two. The weighting has to actually happen: an unweighted solver gets a visibly different answer.",
+  "designCsv": "design.csv",
+  "observationsCsv": "observations.csv",
+  "regularization": {
+    "mode": "explicit",
+    "lambda": 0.0
+  },
+  "uncertainty": {
+    "method": "analytic",
+    "confidenceLevel": 0.95
+  },
+  "assumptions": [
+    "The response is linear in x, with an intercept.",
+    "The standard error given for each observation is the true standard deviation of its noise, so the last two observations carry a quarter of the weight of the first two."
+  ],
+  "limitations": [
+    "This is synthetic data with four points and two parameters. Two residual degrees of freedom are not enough to say much about whether the linear model is right.",
+    "The intervals assume the declared standard errors are correct. They test the fit, not that assumption."
+  ]
+}

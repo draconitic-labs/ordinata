@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "title": "Explicit ridge around a nonzero prior with a non-uniform penalty",
+  "description": "The same four weighted points as the heteroscedastic case, but pulled toward a prior of (1, 1) with lambda = 2 and a diagonal penalty that penalizes the slope twice as hard as the intercept.",
+  "designCsv": "design.csv",
+  "observationsCsv": "observations.csv",
+  "regularization": {
+    "mode": "explicit",
+    "lambda": 2.0,
+    "prior": {
+      "intercept": 1.0,
+      "slope": 1.0
+    },
+    "penalty": {
+      "intercept": 1.0,
+      "slope": 2.0
+    }
+  },
+  "uncertainty": {
+    "method": "analytic",
+    "confidenceLevel": 0.95
+  },
+  "assumptions": [
+    "The response is linear in x, with an intercept.",
+    "The prior of (1, 1) is a real belief about where the parameters should sit, not a placeholder.",
+    "Penalizing the slope twice as hard as the intercept reflects a real belief that the slope is the more suspect of the two."
+  ],
+  "limitations": [
+    "The estimate is deliberately biased toward the prior. The analytic interval describes the spread of that biased estimate; it does not include the bias.",
+    "Lambda was declared, not chosen. Nothing here says it is the right lambda."
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "title": "Rank-deficient design: the same temperature entered twice",
+  "description": "A design that includes temperature in Celsius and, without anyone noticing, the same temperature again on a rescaled axis. The two columns are exactly proportional, so the data cannot tell their coefficients apart, and Ordinata must say so instead of splitting the difference and reporting an interval for each.",
+  "designCsv": "design.csv",
+  "observationsCsv": "observations.csv",
+  "regularization": {
+    "mode": "explicit",
+    "lambda": 0.0
+  },
+  "uncertainty": {
+    "method": "both",
+    "confidenceLevel": 0.95,
+    "bootstrapSamples": 500,
+    "bootstrapSeed": 4242
+  },
+  "assumptions": [
+    "The response is linear in an offset and in temperature.",
+    "Every observation has a standard deviation of 0.05."
+  ],
+  "limitations": [
+    "This design is rank deficient by construction: tempF_shifted is exactly 1.8 times tempC, so no data can separate their coefficients.",
+    "Any single pair of coefficients Ordinata reports here is one of infinitely many that fit the data equally well. Only their combination is determined."
+  ],
+  "validation": {
+    "conditionNumberMax": {
+      "value": 1000.0,
+      "source": "An arbitrary limit, declared here to show that a rank-deficient design fails a condition number check rather than being excused from it."
+    }
+  }
+}

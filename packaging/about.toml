@@ -1,0 +1,41 @@
+# Licence policy for the dependency graph.
+#
+# Ordinata's own source is proprietary. Everything it links against must be under a
+# permissive licence whose only real obligation is attribution, which
+# `THIRD-PARTY-NOTICES.html` discharges. A copyleft dependency would change what
+# Ordinata is allowed to be, so it is not a thing to be noticed at release time and
+# argued about: `cargo about` fails the build on any licence that is not on this list,
+# and adding one to the list is a deliberate act with a reason attached.
+
+accepted = [
+    "Apache-2.0",
+    "MIT",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Unicode-3.0",
+    "Zlib",
+    # Public-domain-equivalent dedications, used by some of the hashing and RNG crates.
+    "CC0-1.0",
+    "Unlicense",
+]
+
+# Dev-dependencies are not shipped, so they are not third-party notices. Build
+# dependencies are, in the sense that their code ran to produce the binary, but they
+# contribute nothing to it -- and `cargo audit` covers them for advisories either way.
+ignore-build-dependencies = true
+ignore-dev-dependencies = true
+
+# A dependency whose licence cannot be determined is a dependency whose licence has not
+# been checked. `cargo about` fails on one, and there is no workaround list here that
+# would quietly wave it through.
+workarounds = []
+
+# Ordinata's own crates are proprietary and carry `publish = false`. They are not
+# third-party notices -- they are the thing the notices are *for* -- so they are excluded
+# from the accepted-licence check rather than added to the accepted list. Adding
+# `LicenseRef-Flintglade-Proprietary` to `accepted` would have worked too, and would have
+# been wrong: it would mean Ordinata was willing to link against *someone else's*
+# proprietary code without noticing.
+[private]
+ignore = true

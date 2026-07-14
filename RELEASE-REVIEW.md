@@ -1,7 +1,7 @@
 # Ordinata v0.1 private release review
 
 Date: 2026-07-14
-Disposition: fresh-context GO for private GitHub review; no public release or billing activation.
+Disposition: private GitHub review candidate complete; no public release or billing activation.
 
 Reviewed commits:
 
@@ -59,13 +59,14 @@ or conclusions are scientifically appropriate.
   strict Clippy, and all host-applicable locked tests. It independently downloaded the
   official LLVM-MinGW `20260616` UCRT x86_64 archive, verified the pinned SHA-256 before
   extraction, and proved the gnullvm linker resolved from that verified toolchain.
+- The first private-repository GitHub Actions run passed both hosted jobs on exact source
+  commit `b98d5a5aff44556c4ec97b9951ea910afde4ff68`: Ubuntu used the pinned Linux host;
+  Windows verified and used the pinned gnullvm/LLVM-MinGW host and linker. Evidence:
+  <https://github.com/flintglade-tools/ordinata/actions/runs/29319322291>.
 - All commits and packaged public identity use `Flintglade <support@flintglade.com>`.
 
 ## Remaining release boundary
 
-- The private repository push is permitted only to obtain the real GitHub-hosted Ubuntu
-  and Windows Actions result. Both jobs must pass before the private review handoff is
-  complete.
 - Public release, billing, package signing, and checkout remain inactive. A later public
   release requires Authenticode or an explicitly accepted unsigned-release policy.
 - The locked graph has zero known vulnerabilities. The allowed unmaintained transitive

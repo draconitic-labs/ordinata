@@ -26,6 +26,7 @@ thiserror = "2"
 time = { version = "0.3", default-features = false, features = ["std", "formatting", "parsing"] }
 
 assert_cmd = "2"
+cyclonedx-bom = "=0.8.1"
 predicates = "3"
 proptest = "1"
 tempfile = "3"

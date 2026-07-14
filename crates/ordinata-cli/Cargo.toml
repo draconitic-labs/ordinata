@@ -26,6 +26,7 @@ time.workspace = true
 
 [dev-dependencies]
 assert_cmd.workspace = true
+cyclonedx-bom.workspace = true
 predicates.workspace = true
 tempfile.workspace = true
 

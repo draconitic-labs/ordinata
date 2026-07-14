@@ -79,13 +79,21 @@ fn drive_absolute_paths(bytes: &[u8]) -> Vec<String> {
     let mut found = Vec::new();
     let mut i = 0;
     while i + 3 <= bytes.len() {
-        if bytes[i].is_ascii_alphabetic() && bytes[i + 1] == b':' && bytes[i + 2] == b'\\' {
+        let separator = bytes[i + 2];
+        let has_boundary = i == 0
+            || !matches!(bytes[i - 1], b'a'..=b'z' | b'A'..=b'Z' | b'0'..=b'9' | b'_' | b'-');
+        if bytes[i].is_ascii_alphabetic()
+            && bytes[i + 1] == b':'
+            && matches!(separator, b'\\' | b'/')
+            && has_boundary
+            && !is_remote_url_context(bytes, i)
+        {
             let mut end = i + 3;
             while end < bytes.len() && is_path_byte(bytes[end]) {
                 end += 1;
             }
             let tail = &bytes[i + 3..end];
-            if tail.len() >= 6 && tail.contains(&b'\\') {
+            if tail.len() >= 6 && tail.iter().any(|b| matches!(b, b'\\' | b'/')) {
                 found.push(String::from_utf8_lossy(&bytes[i..end]).into_owned());
                 i = end;
                 continue;
@@ -94,6 +102,39 @@ fn drive_absolute_paths(bytes: &[u8]) -> Vec<String> {
         i += 1;
     }
     found
+}
+
+/// Is the candidate drive-shaped text part of a remote URL rather than a local path?
+/// `https://host/C:/manual` is a perfectly valid URL and must not fail a release scan;
+/// `file:///C:/build/source` is explicitly local and must still be caught.
+fn is_remote_url_context(bytes: &[u8], candidate: usize) -> bool {
+    let start = bytes[..candidate]
+        .iter()
+        .rposition(|b| {
+            b.is_ascii_whitespace()
+                || matches!(
+                    b,
+                    b'\0'
+                        | b'"'
+                        | b'\''
+                        | b'<'
+                        | b'>'
+                        | b'('
+                        | b')'
+                        | b'['
+                        | b']'
+                        | b'{'
+                        | b'}'
+                        | b'='
+                )
+        })
+        .map_or(0, |index| index + 1);
+    let prefix = &bytes[start..candidate];
+    [b"http://".as_slice(), b"https://", b"ftp://"]
+        .iter()
+        .any(|scheme| {
+            prefix.len() >= scheme.len() && prefix[..scheme.len()].eq_ignore_ascii_case(scheme)
+        })
 }
 
 /// Every marker, computed fresh from the environment this scan is running in.
@@ -209,6 +250,18 @@ fn scan(bytes: &[u8]) -> Vec<String> {
     findings
 }
 
+/// The pinned Rust gnullvm runtime retains the public llvm-mingw CI checkout path in
+/// its vendor-built DLL. It identifies an upstream GitHub Actions runner, not this
+/// machine or a Flintglade operator. Packaging copies and hashes that exact DLL from
+/// the pinned sysroot, so this one known provenance string is accounted for without
+/// weakening scans of Ordinata's executable or any other shipped file.
+fn accounted_vendor_runtime_finding(path: &Path, bytes: &[u8], finding: &str) -> bool {
+    path.file_name()
+        .is_some_and(|name| name.eq_ignore_ascii_case("libunwind.dll"))
+        && finding.contains("a local absolute path (\"/home/\")")
+        && contains_ignore_ascii_case(bytes, b"/home/runner/work/llvm-mingw/llvm-mingw/").is_some()
+}
+
 /// Read the PE/COFF timestamp when `bytes` is a Windows executable.
 ///
 /// LLVM's MinGW linker writes the current wall-clock time here unless the release
@@ -249,6 +302,58 @@ fn the_scanner_finds_a_leak_when_there_is_one() {
             String::from_utf8_lossy(leak)
         );
     }
+}
+
+#[test]
+fn the_scanner_finds_forward_slash_and_file_uri_drive_paths() {
+    for leak in [
+        b"C:/build/deps/thing.rs".as_slice(),
+        b"file:///D:/private/checkouts/thing.rs",
+        b"path+file:///E:/workspace/crates/ordinata-core#0.1.0",
+    ] {
+        assert!(
+            !scan(leak).is_empty(),
+            "the scanner missed {:?}",
+            String::from_utf8_lossy(leak)
+        );
+    }
+}
+
+#[test]
+fn the_scanner_does_not_mistake_remote_urls_for_drive_paths() {
+    for url in [
+        b"https://example.com/a/b".as_slice(),
+        b"http://example.test/C:/published/manual",
+        b"ftp://downloads.example.test/E:/release/archive.zip",
+    ] {
+        assert!(
+            scan(url).is_empty(),
+            "a remote URL was reported as a local path: {:?}: {:?}",
+            String::from_utf8_lossy(url),
+            scan(url)
+        );
+    }
+}
+
+#[test]
+fn only_the_named_vendor_runtime_accounts_for_its_public_ci_path() {
+    let bytes = b"/home/runner/work/llvm-mingw/llvm-mingw/mingw-w64/source.c";
+    let finding = scan(bytes).pop().expect("the structural scan must fire");
+    assert!(accounted_vendor_runtime_finding(
+        Path::new("libunwind.dll"),
+        bytes,
+        &finding
+    ));
+    assert!(!accounted_vendor_runtime_finding(
+        Path::new("ordinata.exe"),
+        bytes,
+        &finding
+    ));
+    assert!(!accounted_vendor_runtime_finding(
+        Path::new("libunwind.dll"),
+        b"/home/private/build/source.c",
+        &finding
+    ));
 }
 
 #[test]
@@ -370,6 +475,9 @@ fn the_shipped_artifact_carries_no_local_or_personal_path() {
     for path in &targets {
         let bytes = std::fs::read(path).unwrap_or_else(|e| panic!("cannot read {path:?}: {e}"));
         for finding in scan(&bytes) {
+            if accounted_vendor_runtime_finding(path, &bytes, &finding) {
+                continue;
+            }
             dirty.push(format!("{}: {finding}", path.display()));
         }
     }
@@ -394,6 +502,10 @@ fn the_windows_release_has_no_wall_clock_timestamp() {
 
     let artifacts: Vec<_> = targets()
         .into_iter()
+        .filter(|path| {
+            path.file_name()
+                .is_some_and(|name| name.eq_ignore_ascii_case("ordinata.exe"))
+        })
         .filter_map(|path| {
             let bytes = std::fs::read(&path).ok()?;
             pe_coff_timestamp(&bytes).map(|timestamp| (path, timestamp))

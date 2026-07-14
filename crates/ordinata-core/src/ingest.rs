@@ -269,13 +269,15 @@ fn parse_design<R: Read>(source: R, file: &str) -> Result<DesignTable> {
         }
         .into());
     }
-    let mut seen = BTreeSet::new();
+    // The first column is reserved. Seed it into the header set so a later column
+    // cannot quietly reuse `observation_id` as a model parameter.
+    let mut seen = BTreeSet::from(["observation_id".to_string()]);
     for name in &parameters {
         check_identifier(file, "parameter name", name)?;
         if !seen.insert(name.clone()) {
             return Err(InputError::DuplicateIdentifier {
                 file: file.to_string(),
-                context: "parameter name".into(),
+                context: "column header".into(),
                 value: name.clone(),
             }
             .into());
@@ -1127,6 +1129,14 @@ mod tests {
         )
         .unwrap_err();
         assert_eq!(err.code(), "duplicate_identifier");
+
+        let err = problem(
+            "observation_id,observation_id\nr1,1\nr2,2\n",
+            "observation_id,value,standard_error\nr1,1,1\nr2,2,1\n",
+        )
+        .unwrap_err();
+        assert_eq!(err.code(), "duplicate_identifier");
+        assert!(err.to_string().contains("observation_id"), "{err}");
     }
 
     #[test]

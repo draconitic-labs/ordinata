@@ -46,7 +46,9 @@ powershell -ExecutionPolicy Bypass -File packaging/package.ps1
 ```
 
 The packaging command also runs the advisory and license gates, builds with local-path
-remapping, performs a clean-room solve/verify/tamper smoke, generates SBOMs and notices,
-scans the complete distribution for personal or local paths, and writes checksums.
+remapping, stages and accounts for the pinned Windows runtime, performs clean-room and
+extracted-archive smokes under a toolchain-free `PATH`, model-validates reproducible
+CycloneDX 1.5 SBOMs, scans the complete distribution for personal or local paths, and
+writes deterministic checksums and a deterministic ZIP.
 
 Support: support@flintglade.com

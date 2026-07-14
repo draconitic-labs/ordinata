@@ -19,10 +19,12 @@ advisory. There is no `--force`.
 | 4 | `cargo audit` | the locked graph against the RustSec database |
 | 5 | `cargo about` | **fails** on any licence not on the accepted list |
 | 6 | `packaging/build-release.ps1` | optimized build **with path remapping**, then the artifact scan |
-| 7 | `cargo cyclonedx` | an SBOM, checked to parse as JSON |
-| 8 | clean-room smoke | see below |
-| 9 | artifact scan over the whole distribution | nothing that ships names the machine that built it |
-| 10 | checksums | `SHA256SUMS.txt` over every shipped file, then a zip and its own digest |
+| 7 | `cargo cyclonedx` | reproducible CycloneDX 1.5 SBOMs with checkout paths normalized away |
+| 8 | CycloneDX model validation | versioned parse plus semantic reference/field validation, not merely JSON syntax |
+| 9 | clean-room smoke | see below; the builder toolchain is removed from `PATH` |
+| 10 | artifact scan over the whole distribution | nothing Flintglade built names the machine that built it |
+| 11 | deterministic checksums and ZIP | `SHA256SUMS.txt`, sorted fixed-timestamp ZIP entries, and the ZIP digest |
+| 12 | extracted-archive smoke | the received ZIP starts, runs `demo`, and verifies with a customer-like `PATH` |
 
 ## Path remapping, and why the build script exists
 
@@ -76,8 +78,9 @@ Gates 1–7 all run inside the source tree, with the toolchain, against fixtures
 seen. A release that passes all of them and still does not work on a customer's machine is
 entirely possible. Gate 8 is what catches that.
 
-It copies the executable out of the tree, changes to a scratch directory outside the
-repository, writes inputs the binary has never seen, and then:
+It uses the staged executable and its packaged runtime, changes to a scratch directory
+outside the repository, removes rustup and developer toolchains from `PATH`, writes inputs
+the binary has never seen, and then:
 
 - `--version`;
 - `demo`, and verifies the bundle it wrote;
@@ -92,17 +95,41 @@ repository, writes inputs the binary has never seen, and then:
 The last two are the ones that matter most. A verifier that passes a tampered bundle, or a
 solve that overwrites somebody's evidence, is not a bug to be found by a customer.
 
+After the deterministic ZIP is written, a second smoke extracts that ZIP into another
+scratch directory under the same sanitized `PATH`, starts the extracted executable, runs
+`demo`, and verifies its output. This is the gate that proves `libunwind.dll` was actually
+shipped beside the executable rather than accidentally found in the builder's toolchain.
+
+## Pinned compiler and Windows runtime
+
+`rust-toolchain.toml` pins Rust 1.96.1 for `x86_64-pc-windows-gnullvm`; `stable` is not a
+release input. The gnullvm executable imports `libunwind.dll`, so packaging copies the exact
+DLL from that pinned sysroot, records its size and SHA-256 in `RUNTIME-COMPONENTS.txt`, and
+ships the Apache 2.0 and LLVM exception texts that govern it. The runtime is a prebuilt
+llvm-mingw artifact: its vendor PE timestamp and public upstream CI checkout string are
+preserved and explicitly accounted, while Ordinata's own executable must have a zero COFF
+timestamp and no local path.
+
+SBOM generation uses a fixed source-date epoch, removes optional invocation UUID/time fields,
+normalizes workspace references to `/ordinata`, and then validates the result through the
+CycloneDX 1.5 Rust model. ZIP member order and timestamps are fixed as well. Together these
+rules make the complete distribution, SBOMs, checksums, and ZIP reproducible across clean
+checkout locations, not just the executable.
+
 ## What ships
 
 ```
 ordinata-0.1.0-<target-triple>/
   ordinata.exe
+  libunwind.dll
   LICENSE
   README.md
   PRODUCT-SPEC.md
   docs/            MODEL, LIMITS, SECURITY, PRIVACY, VALIDATION, FILE-FORMATS, RELEASING
   fixtures/        every reference case, with its hand derivation
   THIRD-PARTY-NOTICES.html
+  RUNTIME-COMPONENTS.txt
+  runtime-licenses/ Apache-2.0 and LLVM exception
   *.cdx.json       CycloneDX SBOM
   SHA256SUMS.txt
 ```

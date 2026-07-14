@@ -7,23 +7,36 @@ Disposition: pending fresh-context review; no public release or billing activati
 
 - `cargo fmt --all -- --check`: pass.
 - `cargo clippy --workspace --all-targets --locked -- -D warnings`: pass.
-- `cargo test --workspace --locked`: pass, 185 tests including real-binary CLI,
+- `cargo test --workspace --locked`: pass, 193 tests including real-binary CLI,
   independent numerical references, properties, hostile inputs, archive attacks,
-  tamper ladder, bundle determinism, and documentation tests.
+  tamper ladder, bundle determinism, runtime/scanner regressions, CycloneDX model
+  validation, and documentation tests.
 - RustSec locked-graph scan: zero known vulnerabilities. One unmaintained transitive
   package warning (`paste` through `nalgebra`/`simba`) is recorded; it is not an affected
   vulnerability and is monitored for a maintained upstream replacement.
-- Full `packaging/package.ps1`: pass with dependency-license notices, CycloneDX SBOMs,
-  clean-room demo/validate/solve/verify, both uncertainty methods, one-byte tamper exit 5,
-  overwrite refusal exit 4, complete-distribution personal-path scan, and checksums.
+- Full unskipped `packaging/package.ps1`: pass with dependency and runtime licence notices,
+  model-valid CycloneDX 1.5 SBOMs, clean-room demo/validate/solve/verify, both uncertainty
+  methods, one-byte tamper exit 5, overwrite refusal exit 4, complete-distribution
+  personal-path scan, deterministic checksums/ZIP, and extracted-archive demo/verify under
+  a sanitized customer `PATH`.
+- Two package runs from clean checkout locations produced byte-identical executables,
+  runtime DLLs, normalized SBOMs, checksum manifests, and ZIPs.
 
 ## Reproduced artifacts
 
-- Optimized executable: 1,435,648 bytes.
-- Executable SHA-256: `dd67d284a8862b1f3c7174074197a2db993e9a08b9087c1bb7d43cfe18150977`.
-- Private review ZIP SHA-256: `44205a75acfafc5ed24b967628b77c82235d7e4d67ca8ba4917352a5f33150cb`.
-- Distribution members: 32, including the product license, runtime executable, docs,
-  fixtures, dependency notices, two CycloneDX SBOMs, and complete checksums.
+- Optimized executable: 1,434,112 bytes; SHA-256
+  `46a50f2aab82d7bf352a70fd055b49eb8f48091f77122e016a0d0638a0115c49`.
+- Pinned `libunwind.dll`: 90,624 bytes; SHA-256
+  `13bf4e99b0193634ebdeb0bbdeff9753b39f1d04799183f664111014aabf4c2c`.
+- Normalized CLI SBOM SHA-256:
+  `606ffb619bd4944ff12ca355ac4b369a98de16755ae91dba97926990c1e29de7`.
+- Normalized core SBOM SHA-256:
+  `c575ac1a73acbad4a380d49ec8b458160a7bbd12d3b63f384ed4f1692892ebff`.
+- Private review ZIP: 816,300 bytes; SHA-256
+  `ecba91bcfb227710cda8b2dd6cf76edc89023fed8721328c2235f23ad626083f`.
+- Distribution members: 36, including the product and runtime licences, executable,
+  exact runtime DLL and manifest, docs, fixtures, dependency notices, two validated
+  CycloneDX SBOMs, and complete checksums.
 
 ## Scientific boundary
 

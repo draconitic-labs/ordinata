@@ -1,7 +1,12 @@
 # Ordinata v0.1 private release review
 
 Date: 2026-07-14
-Disposition: pending fresh-context review; no public release or billing activation.
+Disposition: fresh-context GO for private GitHub review; no public release or billing activation.
+
+Reviewed commits:
+
+- Release implementation and deterministic package: `b3d59f3496269c7619e16cb47fe5bd53e27461cb`.
+- Cross-platform CI repair: `0609865715adfdb817b7feeb48c55b74740f7660`.
 
 ## Reproduced gates
 
@@ -45,7 +50,23 @@ Verification proves bundle consistency and unchanged bytes; it is not a signatur
 does not prove that the declared linear model, uncertainties, assumptions, thresholds,
 or conclusions are scientifically appropriate.
 
-## Remaining hold
+## Independent review
 
-- Obtain a fresh-context numerical/security review of the exact committed candidate.
-- Push only to the private Flintglade repository after both checks pass.
+- A fresh numerical/security/package review found no reportable security or numerical
+  defect and reproduced the complete Windows package twice from differently located
+  clean checkouts. Both 36-member archives were byte-identical.
+- A separate fresh CI review reproduced the exact Rust 1.96.1 Linux and Windows hosts,
+  strict Clippy, and all host-applicable locked tests. It independently downloaded the
+  official LLVM-MinGW `20260616` UCRT x86_64 archive, verified the pinned SHA-256 before
+  extraction, and proved the gnullvm linker resolved from that verified toolchain.
+- All commits and packaged public identity use `Flintglade <support@flintglade.com>`.
+
+## Remaining release boundary
+
+- The private repository push is permitted only to obtain the real GitHub-hosted Ubuntu
+  and Windows Actions result. Both jobs must pass before the private review handoff is
+  complete.
+- Public release, billing, package signing, and checkout remain inactive. A later public
+  release requires Authenticode or an explicitly accepted unsigned-release policy.
+- The locked graph has zero known vulnerabilities. The allowed unmaintained transitive
+  `paste` advisory remains monitored and is not a known affected vulnerability.

@@ -29,11 +29,14 @@ jobs:
             toolchain: 1.96.1-x86_64-pc-windows-gnullvm
             host: x86_64-pc-windows-gnullvm
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     env:
       # This overrides the repository's intentionally Windows-only release pin on Linux.
       RUSTUP_TOOLCHAIN: ${{ matrix.toolchain }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Install pinned Rust host and components
         run: rustup toolchain install "${{ matrix.toolchain }}" --profile minimal --component rustfmt --component clippy
       - name: Install pinned LLVM-MinGW

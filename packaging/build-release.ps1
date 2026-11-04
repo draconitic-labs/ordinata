@@ -54,6 +54,9 @@ function Invoke-Native {
 
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 
+# rust-toolchain.toml pins the compiler version on every platform. A release also pins the host.
+$env:RUSTUP_TOOLCHAIN = '1.96.1-x86_64-pc-windows-gnullvm'
+
 # Where the registry actually lives on this machine. Cargo's own default when
 # CARGO_HOME is unset is $USERPROFILE\.cargo, and that is the path that ends up in the
 # binary, so that is the path that has to be remapped.

@@ -1,7 +1,7 @@
 # Ordinata v0.1 release review
 
 Date: 2026-07-14
-Disposition: release candidate review complete; no binary release or billing activation.
+Disposition: release candidate review complete; no binary release.
 
 Reviewed commits:
 
@@ -67,7 +67,7 @@ or conclusions are scientifically appropriate.
 
 ## Remaining release boundary
 
-- Binary release, billing, package signing, and checkout remain inactive. A later binary
+- Binary release and package signing remain inactive. A later binary
   release requires Authenticode or an explicitly accepted unsigned-release policy.
 - The locked graph has zero known vulnerabilities. The allowed unmaintained transitive
   `paste` advisory remains monitored and is not a known affected vulnerability.

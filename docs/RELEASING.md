@@ -158,8 +158,8 @@ it against cases whose answers were worked out by hand, on paper, in `PROVENANCE
 
 ## This release
 
-**Private.** GitHub stays private, nothing is published, sales are not active, and billing is
-not switched on. The distribution is a review artifact.
+**Release candidate.** No binary is published, sales are not active, and billing is not
+switched on. The distribution is a review artifact.
 
 See [RELEASE-REVIEW.md](../RELEASE-REVIEW.md) for the evidence from the most recent run, the
 exact commands, the artifact hashes, and the holds that remain.

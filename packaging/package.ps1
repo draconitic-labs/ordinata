@@ -48,6 +48,8 @@ $dist = Join-Path $root 'dist'
 # it was not built for is worse than one with no triple in the name at all: the binary
 # in it links against a different runtime than the name promises, and the person who
 # finds that out is the customer.
+# rust-toolchain.toml pins the compiler version on every platform. A release also pins the host.
+$env:RUSTUP_TOOLCHAIN = '1.96.1-x86_64-pc-windows-gnullvm'
 $rustcInfo = & rustc -vV
 if ($LASTEXITCODE -ne 0) { throw "rustc -vV failed" }
 $triple = ($rustcInfo | Select-String '^host: ').Line -replace '^host:\s*', ''
@@ -467,7 +469,7 @@ try {
     Write-Host "  sha256  $zipHash"
     Write-Host "  members $((Get-ChildItem -Path $stage -Recurse -File).Count)"
     Write-Host ""
-    Write-Host "This is a private review artifact. It is not published, and billing is not active."
+    Write-Host "This is a review artifact. It is not published."
 } finally {
     Pop-Location
 }

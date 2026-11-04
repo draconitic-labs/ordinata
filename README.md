@@ -4,8 +4,8 @@ Ordinata is a local linear inverse-problem and uncertainty workbench. It turns a
 bounded weighted linear calibration problem into a portable, tamper-checkable evidence
 bundle without presenting fitted estimates or synthetic samples as measurements.
 
-This repository contains the private v0.1 release candidate. Sales and public
-distribution are not active.
+Ordinata is open-source software under the [Apache License 2.0](LICENSE). This repository
+contains the v0.1 release candidate; there are no binary releases yet.
 
 ## What it does
 

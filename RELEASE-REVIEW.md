@@ -1,7 +1,7 @@
-# Ordinata v0.1 private release review
+# Ordinata v0.1 release review
 
 Date: 2026-07-14
-Disposition: private GitHub review candidate complete; no public release or billing activation.
+Disposition: release candidate review complete; no binary release.
 
 Reviewed commits:
 
@@ -37,7 +37,7 @@ Reviewed commits:
   `606ffb619bd4944ff12ca355ac4b369a98de16755ae91dba97926990c1e29de7`.
 - Normalized core SBOM SHA-256:
   `c575ac1a73acbad4a380d49ec8b458160a7bbd12d3b63f384ed4f1692892ebff`.
-- Private review ZIP: 816,300 bytes; SHA-256
+- Review ZIP: 816,300 bytes; SHA-256
   `ecba91bcfb227710cda8b2dd6cf76edc89023fed8721328c2235f23ad626083f`.
 - Distribution members: 36, including the product and runtime licences, executable,
   exact runtime DLL and manifest, docs, fixtures, dependency notices, two validated
@@ -59,15 +59,15 @@ or conclusions are scientifically appropriate.
   strict Clippy, and all host-applicable locked tests. It independently downloaded the
   official LLVM-MinGW `20260616` UCRT x86_64 archive, verified the pinned SHA-256 before
   extraction, and proved the gnullvm linker resolved from that verified toolchain.
-- The first private-repository GitHub Actions run passed both hosted jobs on exact source
+- The first GitHub Actions run passed both hosted jobs on exact source
   commit `b98d5a5aff44556c4ec97b9951ea910afde4ff68`: Ubuntu used the pinned Linux host;
   Windows verified and used the pinned gnullvm/LLVM-MinGW host and linker. Evidence:
   <https://github.com/flintglade-tools/ordinata/actions/runs/29319322291>.
-- All commits and packaged public identity use `Flintglade <support@flintglade.com>`.
+- Packaged public identity uses `Flintglade <support@flintglade.com>`.
 
 ## Remaining release boundary
 
-- Public release, billing, package signing, and checkout remain inactive. A later public
+- Binary release and package signing remain inactive. A later binary
   release requires Authenticode or an explicitly accepted unsigned-release policy.
 - The locked graph has zero known vulnerabilities. The allowed unmaintained transitive
   `paste` advisory remains monitored and is not a known affected vulnerability.

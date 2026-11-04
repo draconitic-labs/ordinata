@@ -4,9 +4,7 @@
 
 **Ordinata — Linear Inference Workbench** is a local-first instrument for researchers and engineers who repeatedly solve small-to-medium weighted linear inverse or calibration problems and need a reviewable result rather than an opaque notebook state.
 
-The paid outcome is one portable evidence bundle containing normalized inputs, solver/version choices, selected regularization, parameter estimates and uncertainty, predictions and residuals, validation checks, declared assumptions and limitations, checksums, and a static human report.
-
-Future launch hypothesis: free verifier and examples; $79 one-time Academic, $249 one-time Lab, and $999 Commercial team license with batch/project templates. This turn keeps source and release private and does not activate billing.
+The outcome is one portable evidence bundle containing normalized inputs, solver/version choices, selected regularization, parameter estimates and uncertainty, predictions and residuals, validation checks, declared assumptions and limitations, checksums, and a static human report.
 
 ## Strict v0.1 scope
 
@@ -108,4 +106,4 @@ Rust workspace:
 
 Preferred runtime dependencies: `serde`, `serde_json`, `csv`, `sha2`, `nalgebra`, `clap`, `thiserror`, `time`, `rand_chacha`, and `rand_distr`; any addition needs a trust-path note. Dev dependencies may include `proptest`, `assert_cmd`, `predicates`, and `tempfile`.
 
-Release gates include format, strict Clippy, all tests, advisory/license scan, optimized build, clean-room CLI smoke, dependency notices, valid CycloneDX SBOM, complete checksums, archive path safety, personal-name/path/secret scan, and independent fresh-context review. GitHub is private; publish a private review release only after every local gate passes.
+Release gates include format, strict Clippy, all tests, advisory/license scan, optimized build, clean-room CLI smoke, dependency notices, valid CycloneDX SBOM, complete checksums, archive path safety, personal-name/path/secret scan, and independent fresh-context review. Publish a release only after every local gate passes.

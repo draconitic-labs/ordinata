@@ -102,8 +102,8 @@ shipped beside the executable rather than accidentally found in the builder's to
 
 ## Pinned compiler and Windows runtime
 
-`rust-toolchain.toml` pins Rust 1.96.1 for `x86_64-pc-windows-gnullvm`; `stable` is not a
-release input. The gnullvm executable imports `libunwind.dll`, so packaging copies the exact
+`rust-toolchain.toml` pins Rust 1.96.1, and the packaging scripts also select the
+`x86_64-pc-windows-gnullvm` host; `stable` is not a release input. The gnullvm executable imports `libunwind.dll`, so packaging copies the exact
 DLL from that pinned sysroot, records its size and SHA-256 in `RUNTIME-COMPONENTS.txt`, and
 ships the Apache 2.0 and LLVM exception texts that govern it. The runtime is a prebuilt
 llvm-mingw artifact: its vendor PE timestamp and public upstream CI checkout string are
@@ -158,8 +158,7 @@ it against cases whose answers were worked out by hand, on paper, in `PROVENANCE
 
 ## This release
 
-**Private.** GitHub stays private, nothing is published, sales are not active, and billing is
-not switched on. The distribution is a review artifact.
+**Release candidate.** No binary is published. The distribution is a review artifact.
 
 See [RELEASE-REVIEW.md](../RELEASE-REVIEW.md) for the evidence from the most recent run, the
 exact commands, the artifact hashes, and the holds that remain.

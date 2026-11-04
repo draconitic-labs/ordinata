@@ -1,6 +1,6 @@
 # Licence policy for the dependency graph.
 #
-# Ordinata's own source is proprietary. Everything it links against must be under a
+# Ordinata is licensed under Apache-2.0. Everything it links against must be under a
 # permissive licence whose only real obligation is attribution, which
 # `THIRD-PARTY-NOTICES.html` discharges. A copyleft dependency would change what
 # Ordinata is allowed to be, so it is not a thing to be noticed at release time and
@@ -31,11 +31,8 @@ ignore-dev-dependencies = true
 # would quietly wave it through.
 workarounds = []
 
-# Ordinata's own crates are proprietary and carry `publish = false`. They are not
-# third-party notices -- they are the thing the notices are *for* -- so they are excluded
-# from the accepted-licence check rather than added to the accepted list. Adding
-# `LicenseRef-Flintglade-Proprietary` to `accepted` would have worked too, and would have
-# been wrong: it would mean Ordinata was willing to link against *someone else's*
-# proprietary code without noticing.
+# Ordinata's own crates carry `publish = false`. They are not third-party notices -- they
+# are the thing the notices are *for* -- so they are excluded from the accepted-licence
+# check.
 [private]
 ignore = true

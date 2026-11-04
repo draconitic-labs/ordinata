@@ -106,4 +106,4 @@ Rust workspace:
 
 Preferred runtime dependencies: `serde`, `serde_json`, `csv`, `sha2`, `nalgebra`, `clap`, `thiserror`, `time`, `rand_chacha`, and `rand_distr`; any addition needs a trust-path note. Dev dependencies may include `proptest`, `assert_cmd`, `predicates`, and `tempfile`.
 
-Release gates include format, strict Clippy, all tests, advisory/license scan, optimized build, clean-room CLI smoke, dependency notices, valid CycloneDX SBOM, complete checksums, archive path safety, personal-name/path/secret scan, and independent fresh-context review. GitHub is private; publish a private review release only after every local gate passes.
+Release gates include format, strict Clippy, all tests, advisory/license scan, optimized build, clean-room CLI smoke, dependency notices, valid CycloneDX SBOM, complete checksums, archive path safety, personal-name/path/secret scan, and independent fresh-context review. Publish a release only after every local gate passes.

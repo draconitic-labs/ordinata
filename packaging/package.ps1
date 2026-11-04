@@ -469,7 +469,7 @@ try {
     Write-Host "  sha256  $zipHash"
     Write-Host "  members $((Get-ChildItem -Path $stage -Recurse -File).Count)"
     Write-Host ""
-    Write-Host "This is a private review artifact. It is not published, and billing is not active."
+    Write-Host "This is a review artifact. It is not published, and billing is not active."
 } finally {
     Pop-Location
 }

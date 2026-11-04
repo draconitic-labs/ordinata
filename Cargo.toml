@@ -6,7 +6,7 @@ resolver = "2"
 version = "0.1.0"
 edition = "2021"
 rust-version = "1.88"
-license = "LicenseRef-Flintglade-Proprietary"
+license = "Apache-2.0"
 authors = ["Flintglade <support@flintglade.com>"]
 publish = false
 

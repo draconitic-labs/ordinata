@@ -2,12 +2,12 @@ Ordinata Source Code License
 
 Copyright (c) 2026 Flintglade. All rights reserved.
 
-This source code is proprietary and made available only for inspection, security review,
-and evaluation on systems owned or controlled by the evaluator. It may not be copied,
-redistributed, sold, sublicensed, used to provide a competing product or service, or
-incorporated into another work without written permission from Flintglade, except where
-applicable law requires otherwise. Third-party components remain governed by the licenses
-identified in THIRD-PARTY-NOTICES.html.
+This source code and the programs built from it are proprietary. You may clone, build, and
+run them for inspection, security review, and evaluation on systems you own or control. They
+may not otherwise be copied, and may not be redistributed, sold, sublicensed, used to provide
+a production service or a competing product or service, or incorporated into another work
+without written permission from Flintglade, except where applicable law requires otherwise.
+Third-party components remain governed by the licenses identified in THIRD-PARTY-NOTICES.html.
 
 THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND. ORDINATA IS A NUMERICAL
 WORKBENCH, NOT A MEASUREMENT DEVICE, SAFETY AUTHORITY, CERTIFICATION TOOL, OR SUBSTITUTE

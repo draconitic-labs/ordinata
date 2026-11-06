@@ -16,7 +16,7 @@ ordinata-core = { path = "crates/ordinata-core", version = "0.1.0" }
 clap = { version = "4", features = ["derive", "std", "help", "usage", "error-context"], default-features = false }
 csv = "1.3"
 miniz_oxide = { version = "0.8", default-features = false, features = ["with-alloc"] }
-nalgebra = { version = "0.34", default-features = false, features = ["std"] }
+nalgebra = { version = "0.35", default-features = false, features = ["std"] }
 rand_chacha = { version = "0.9", default-features = false }
 rand_core = { version = "0.9", default-features = false }
 serde = { version = "1", features = ["derive"] }

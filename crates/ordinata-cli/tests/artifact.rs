@@ -252,7 +252,7 @@ fn scan(bytes: &[u8]) -> Vec<String> {
 
 /// The pinned Rust gnullvm runtime retains the public llvm-mingw CI checkout path in
 /// its vendor-built DLL. It identifies an upstream GitHub Actions runner, not this
-/// machine or a Flintglade operator. Packaging copies and hashes that exact DLL from
+/// machine or whoever built Ordinata. Packaging copies and hashes that exact DLL from
 /// the pinned sysroot, so this one known provenance string is accounted for without
 /// weakening scans of Ordinata's executable or any other shipped file.
 fn accounted_vendor_runtime_finding(path: &Path, bytes: &[u8], finding: &str) -> bool {

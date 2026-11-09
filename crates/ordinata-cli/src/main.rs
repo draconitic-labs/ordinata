@@ -48,7 +48,7 @@ use time::OffsetDateTime;
     about,
     long_about = None,
     disable_help_subcommand = true,
-    after_help = "Support: support@flintglade.com"
+    after_help = "Support: support@draconitic.com"
 )]
 struct Cli {
     #[command(subcommand)]

@@ -7,7 +7,7 @@ version = "0.1.0"
 edition = "2021"
 rust-version = "1.88"
 license = "Apache-2.0"
-authors = ["Flintglade <support@flintglade.com>"]
+authors = ["Draconitic Labs <support@draconitic.com>"]
 publish = false
 
 [workspace.dependencies]

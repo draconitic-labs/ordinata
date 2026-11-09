@@ -99,4 +99,4 @@ by an artifact scan that the release script cannot skip. See [SECURITY.md](SECUR
 
 ## Contact
 
-`support@flintglade.com`. Ordinata itself will never contact us on your behalf.
+`support@draconitic.com`. Ordinata itself will never contact us on your behalf.

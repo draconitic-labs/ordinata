@@ -11,10 +11,10 @@ use serde_json::json;
 pub const TOOL_NAME: &str = "ordinata";
 
 /// Publisher shown in bundle provenance and packaging metadata.
-pub const PUBLISHER: &str = "Flintglade";
+pub const PUBLISHER: &str = "Draconitic Labs";
 
 /// Support contact shown in bundle provenance and packaging metadata.
-pub const SUPPORT_CONTACT: &str = "support@flintglade.com";
+pub const SUPPORT_CONTACT: &str = "support@draconitic.com";
 
 /// Tool version, from the crate manifest.
 pub const TOOL_VERSION: &str = env!("CARGO_PKG_VERSION");

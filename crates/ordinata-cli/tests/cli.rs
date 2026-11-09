@@ -114,7 +114,7 @@ fn version_names_the_tool_and_nothing_personal() {
 fn help_names_the_support_contact_and_not_a_person() {
     let output = ordinata().arg("--help").output().unwrap();
     let text = String::from_utf8_lossy(&output.stdout).into_owned();
-    assert!(text.contains("support@flintglade.com"), "{text}");
+    assert!(text.contains("support@draconitic.com"), "{text}");
 }
 
 // ---------------------------------------------------------------------------

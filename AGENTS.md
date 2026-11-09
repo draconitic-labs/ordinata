@@ -15,7 +15,7 @@
 - Ordinata is a local linear inverse-problem instrument. It is not a universal simulator, nonlinear optimizer, Bayesian engine, PDE solver, controller, measurement device, safety authority, or certification tool.
 - Simulation, fitted estimates, and bootstrap samples must never be called measurements.
 - No runtime network, telemetry, account, external process, plugin execution, script evaluation, or secret-bearing configuration.
-- Public identity is Ordinata, with Flintglade/support@flintglade.com only in restrained publisher/support metadata.
+- Public identity is Ordinata, with Draconitic Labs/support@draconitic.com only in restrained publisher/support metadata.
 
 ## Engineering constraints
 

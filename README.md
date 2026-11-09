@@ -4,8 +4,44 @@ Ordinata is a local linear inverse-problem and uncertainty workbench. It turns a
 bounded weighted linear calibration problem into a portable, tamper-checkable evidence
 bundle without presenting fitted estimates or synthetic samples as measurements.
 
-Ordinata is open-source software under the [Apache License 2.0](LICENSE). This repository
-contains the v0.1 release candidate; there are no binary releases yet.
+Ordinata is open-source software under the [Apache License 2.0](LICENSE).
+
+## Download
+
+Version 0.1.0, the first release, is on the
+[releases page](https://github.com/draconitic-labs/ordinata/releases/tag/v0.1.0):
+
+| System | File |
+| --- | --- |
+| Windows x86_64 | `ordinata-0.1.0-x86_64-pc-windows-gnullvm.zip` |
+| Linux x86_64, glibc 2.35 or newer (built on Ubuntu 22.04) | `ordinata-0.1.0-x86_64-unknown-linux-gnu.tar.gz` |
+
+`SHA256SUMS` on the same page lists the checksum of each file. On Linux, check a download
+with `sha256sum -c SHA256SUMS --ignore-missing`.
+
+Nothing is installed. On Windows, extract the ZIP and run `ordinata.exe` from the extracted
+folder, which also holds the `libunwind.dll` runtime it needs. The executable is not
+code-signed, so Windows SmartScreen may ask before the first run.
+
+```powershell
+cd ordinata-0.1.0-x86_64-pc-windows-gnullvm
+.\ordinata.exe demo --out demo-bundle
+.\ordinata.exe verify demo-bundle
+```
+
+On Linux:
+
+```sh
+tar -xzf ordinata-0.1.0-x86_64-unknown-linux-gnu.tar.gz
+cd ordinata-0.1.0-x86_64-unknown-linux-gnu
+./ordinata demo --out demo-bundle
+./ordinata verify demo-bundle
+```
+
+`demo` writes an evidence bundle from built-in synthetic data, and `verify` checks it. The
+Windows ZIP also carries the full documentation, the reference fixtures, CycloneDX SBOMs,
+and the dependency licence notices; the Linux archive carries the binary, this README,
+`LICENSE`, and `THIRD-PARTY-NOTICES.html`.
 
 ## What it does
 
@@ -36,7 +72,7 @@ The complete input, numerical, refusal, and bundle contracts are in
 [PRODUCT-SPEC.md](PRODUCT-SPEC.md), [docs/MODEL.md](docs/MODEL.md), and
 [docs/FILE-FORMATS.md](docs/FILE-FORMATS.md).
 
-## Verify the source and release
+## Build and verify from source
 
 ```powershell
 cargo fmt --all -- --check
@@ -51,4 +87,10 @@ extracted-archive smokes under a toolchain-free `PATH`, model-validates reproduc
 CycloneDX 1.5 SBOMs, scans the complete distribution for personal or local paths, and
 writes deterministic checksums and a deterministic ZIP.
 
-Support: support@flintglade.com
+`.github/workflows/release.yml` builds both release packages. On Windows it runs
+`packaging/package.ps1`; on Linux it builds on Ubuntu 22.04 with the same path remapping
+and scans the package the same way. Each job then runs the packaged program from its
+extracted archive outside the checkout. A `v*` tag creates a draft release with both files
+and `SHA256SUMS`. See [docs/RELEASING.md](docs/RELEASING.md).
+
+Support: support@draconitic.com

@@ -9,6 +9,24 @@ packaging\package.ps1
 It runs every gate in order and stops at the first thing that is wrong. Nothing in it is
 advisory. There is no `--force`.
 
+## The release workflow
+
+`.github/workflows/release.yml` builds the published packages:
+
+- **Windows**, on `windows-latest`: the pinned gnullvm toolchain and LLVM-MinGW from `ci.yml`,
+  then `packaging\package.ps1` with every gate.
+- **Linux**, on `ubuntu-22.04` so the binary runs on older glibc: `cargo build --release
+  --locked` with the same path remapping as `build-release.ps1`, the licence notices from
+  `about.toml` and `about.hbs`, the artifact scan over the staged package, and a
+  deterministic `.tar.gz`.
+
+Each job then extracts its archive into a scratch directory outside the checkout and runs
+the packaged binary with only the system on `PATH`: `--version`, `demo`, and `verify` on
+the demo bundle; on Linux also a one-byte change that `verify` must refuse with exit 5.
+
+A manual run (`workflow_dispatch`) stops at workflow artifacts. A `v*` tag also creates a
+**draft** release with both archives and `SHA256SUMS`; a person publishes it.
+
 ## The gates
 
 | # | gate | what it is for |
@@ -22,7 +40,7 @@ advisory. There is no `--force`.
 | 7 | `cargo cyclonedx` | reproducible CycloneDX 1.5 SBOMs with checkout paths normalized away |
 | 8 | CycloneDX model validation | versioned parse plus semantic reference/field validation, not merely JSON syntax |
 | 9 | clean-room smoke | see below; the builder toolchain is removed from `PATH` |
-| 10 | artifact scan over the whole distribution | nothing Flintglade built names the machine that built it |
+| 10 | artifact scan over the whole distribution | nothing in the distribution names the machine that built it |
 | 11 | deterministic checksums and ZIP | `SHA256SUMS.txt`, sorted fixed-timestamp ZIP entries, and the ZIP digest |
 | 12 | extracted-archive smoke | the received ZIP starts, runs `demo`, and verifies with a customer-like `PATH` |
 
@@ -136,6 +154,16 @@ ordinata-0.1.0-<target-triple>/
 
 plus the zip and its `.sha256`.
 
+The Linux package is smaller:
+
+```
+ordinata-0.1.0-x86_64-unknown-linux-gnu/
+  ordinata
+  LICENSE
+  README.md
+  THIRD-PARTY-NOTICES.html
+```
+
 `<target-triple>` is read from the active pinned Rust toolchain at build time; the
 directory name therefore describes the binary that was actually produced rather than
 assuming a particular Windows runtime.
@@ -158,7 +186,8 @@ it against cases whose answers were worked out by hand, on paper, in `PROVENANCE
 
 ## This release
 
-**Release candidate.** No binary is published. The distribution is a review artifact.
+**v0.1.0** is the first binary release, built by the release workflow above. The Windows
+executable is not Authenticode-signed.
 
-See [RELEASE-REVIEW.md](../RELEASE-REVIEW.md) for the evidence from the most recent run, the
-exact commands, the artifact hashes, and the holds that remain.
+[RELEASE-REVIEW.md](../RELEASE-REVIEW.md) records the release-candidate review of July 2026:
+the commands, the artifact hashes, and the holds at that time.

@@ -19,7 +19,7 @@
 use std::fmt::Write as _;
 
 use rand_chacha::ChaCha20Rng;
-use rand_core::RngCore;
+use rand_core::Rng;
 use serde_json::json;
 
 use crate::canonical;

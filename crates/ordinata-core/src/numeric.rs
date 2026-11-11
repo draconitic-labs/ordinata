@@ -7,7 +7,7 @@
 //! between versions, which would move every interval Ordinata has ever published.
 
 use rand_chacha::ChaCha20Rng;
-use rand_core::{RngCore, SeedableRng};
+use rand_core::{Rng, SeedableRng};
 use sha2::{Digest, Sha256};
 
 use crate::spec::BOOTSTRAP_SEED_DOMAIN;

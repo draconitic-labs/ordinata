@@ -21,12 +21,12 @@ rand_chacha = { version = "0.10", default-features = false }
 rand_core = { version = "0.10", default-features = false }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-sha2 = "0.10"
+sha2 = "0.11"
 thiserror = "2"
 time = { version = "0.3", default-features = false, features = ["std", "formatting", "parsing"] }
 
 assert_cmd = "2"
-cyclonedx-bom = "=0.8.1"
+cyclonedx-bom = "=0.9.0"
 predicates = "3"
 proptest = "1"
 tempfile = "3"
